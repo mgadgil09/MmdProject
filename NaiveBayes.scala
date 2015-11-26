@@ -43,26 +43,26 @@ class NaiveBayes {
   while(i<s.length){
     var value=0.0
     
-    /*if(i%30==16){
+    if(i%30==16){
       value=s(i).toDouble*4.4185
     }
     else if(i%30==29){
        value=s(i).toDouble*0.1494
     }else if(i%30==12){
        value=s(i).toDouble
-    }*/
-    if(i%30!=7 || i%30!=25 || i%30!=27){
-      value=s(i).toDouble
+    }
+    /*if(i%30!=7 || i%30!=25 || i%30!=27){
+      value=s(i).toDouble*/
     
     list+=value
-    list+=1.0/value
+    /*list+=1.0/value
     list+=Math.pow(value,2)
     list+=Math.pow(value,3)
     if(i%30!=0){
        list+=prevVal*value
-    }
+    }*/
     
-    }
+   // }
     prevVal=value
     i+=1
   }
@@ -94,26 +94,26 @@ class NaiveBayes {
   var prevVal=0.0
   while(i<s.length){
     var value=0.0
-    /*if(i%30==16){
+    if(i%30==16){
       value=s(i).toDouble*4.4185
     }
     else if(i%30==29){
        value=s(i).toDouble*0.1494
     }else if(i%30==12){
        value=s(i).toDouble
-    }*/
-    if(i%30!=7 || i%30!=25 || i%30!=27){
-      value=s(i).toDouble
+    }
+    /*if(i%30!=7 || i%30!=25 || i%30!=27){
+      value=s(i).toDouble*/
    
     list+=value
-    list+=1.0/value
+    /*list+=1.0/value
     list+=Math.pow(value,2)
     list+=Math.pow(value,3)
     if(i%30!=0){
        list+=prevVal*value
     }
     
-     }
+     }*/
     prevVal=value
     i+=1
   }

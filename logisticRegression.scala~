@@ -39,7 +39,7 @@ val header = parse.take(1).map{line =>
 
 val noLabel = header.map{case(k,v) => v.split(" ")}.flatMap(line => line)
 
-var joined = vData.map{case(k,v) => 
+var joined1 = vData.map{case(k,v) => 
 				var newV = for(i <- 0 until v.length)yield{
 					(i+1).toString+":"+v(i).toDouble+" "
 					
@@ -69,7 +69,6 @@ val predictionAndLabels = testdata.map { case LabeledPoint(label, features) =>
 
 // Get evaluation metrics.
 val metrics = new BinaryClassificationMetrics(predictionAndLabels)
-predictionAndLabels.filter{x=>x._1==x._2}.count().toDouble/ predictionAndLabels.count()
 predictionAndLabels.coalesce(1).saveAsTextFile("LRResultPredictedSolution")
 }
 }

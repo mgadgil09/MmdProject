@@ -1,0 +1,6 @@
+------data/LRResultPredictedSolution.txt Results--------------
+
+ACCURACY=0.6068322313160486
+AUC ROC=0.5162467558683348
+F1 SCORE=0.29783334811267775
+

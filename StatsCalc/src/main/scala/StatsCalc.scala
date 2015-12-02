@@ -39,6 +39,6 @@ object StatsCalc {
     println("ACCURACY="+acc)
     println("AUC ROC="+aucroc)
     println("F1 SCORE="+f1+"\n")
-    
+    println(tp + " " + fp + " " + fn + " " +tn)
   }
 }

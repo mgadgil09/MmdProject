@@ -72,10 +72,10 @@ val testdata = MLUtils.loadLibSVMFile(sc, "testingDataRandomForests/part-0000*")
 
 val numClasses = 2
 val categoricalFeaturesInfo = Map[Int, Int]()
-val numTrees = 32 // Use more in practice.
+val numTrees = 25// Use more in practice.
 val featureSubsetStrategy = "auto" // Let the algorithm choose.
 val impurity = "gini"
-val maxDepth = 4
+val maxDepth = 2
 val maxBins = 32
 
 val model = RandomForest.trainClassifier(traindata, numClasses, categoricalFeaturesInfo,
@@ -87,5 +87,5 @@ val labelAndPreds = testdata.map { point =>
   (point.label, prediction)
 }
 val accuracy = labelAndPreds.filter(r => r._1==r._2).count.toDouble / labelAndPreds.count()
-val metrics = new BinaryClassificationMetrics(predictionAndLabels)
+val metrics = new BinaryClassificationMetrics(labelAndPreds)
 var m = metrics.roc().collect()

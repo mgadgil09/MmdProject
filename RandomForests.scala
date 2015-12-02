@@ -8,7 +8,7 @@ import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.util.MLUtils
 import org.apache.spark.mllib.tree.DecisionTree
 import org.apache.spark.mllib.util.MLUtils
-
+import org.apache.spark.mllib.tree.RandomForest
 
 class NaiveBayes {
   def main(args: Array[String]){
@@ -72,10 +72,10 @@ val testdata = MLUtils.loadLibSVMFile(sc, "testingDataRandomForests/part-0000*")
 
 val numClasses = 2
 val categoricalFeaturesInfo = Map[Int, Int]()
-val numTrees = 27 // Use more in practice.
+val numTrees = 27// Use more in practice.
 val featureSubsetStrategy = "auto" // Let the algorithm choose.
 val impurity = "gini"
-val maxDepth = 4
+val maxDepth = 2
 val maxBins = 32
 
 val model = RandomForest.trainClassifier(traindata, numClasses, categoricalFeaturesInfo,

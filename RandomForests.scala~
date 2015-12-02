@@ -6,6 +6,9 @@ import org.apache.spark.mllib.classification.{LogisticRegressionWithLBFGS, Logis
 import org.apache.spark.mllib.evaluation._
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.util.MLUtils
+import org.apache.spark.mllib.tree.DecisionTree
+import org.apache.spark.mllib.util.MLUtils
+
 
 class NaiveBayes {
   def main(args: Array[String]){
@@ -60,28 +63,29 @@ var joined = vData.map{case(k,v) =>
 
 joined
 	} 	
-svmlibConverter("fordTrain.csv").saveAsTextFile("trainingDataLogResPlain")
-svmlibConverter("fordTest.csv").saveAsTextFile("testingDataLogResPlain")
+svmlibConverter("fordTrain.csv").saveAsTextFile("trainingDataRandomForests")
+svmlibConverter("fordTest.csv").saveAsTextFile("testingDataRandomForests")
 
 
-val traindata = MLUtils.loadLibSVMFile(sc, "trainingDataLogResPlain/part-0000*").cache()
-val testdata = MLUtils.loadLibSVMFile(sc, "testingDataLogResPlain/part-0000*")
-	
+val traindata = MLUtils.loadLibSVMFile(sc, "trainingDataRandomForests/part-0000*").cache()
+val testdata = MLUtils.loadLibSVMFile(sc, "testingDataRandomForests/part-0000*")
 
-val model = new LogisticRegressionWithLBFGS()
-  .setNumClasses(2)
-  .run(traindata)
+val numClasses = 2
+val categoricalFeaturesInfo = Map[Int, Int]()
+val numTrees = 32 // Use more in practice.
+val featureSubsetStrategy = "auto" // Let the algorithm choose.
+val impurity = "gini"
+val maxDepth = 4
+val maxBins = 32
 
-// Compute raw scores on the test set.
-val predictionAndLabels = testdata.map { case LabeledPoint(label, features) =>
-  val prediction = model.predict(features)
-  (prediction, label)
+val model = RandomForest.trainClassifier(traindata, numClasses, categoricalFeaturesInfo,
+  numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins)
+
+// Evaluate model on test instances and compute test error
+val labelAndPreds = testdata.map { point =>
+  val prediction = model.predict(point.features)
+  (point.label, prediction)
 }
-
-// Get evaluation metrics.
+val accuracy = labelAndPreds.filter(r => r._1==r._2).count.toDouble / labelAndPreds.count()
 val metrics = new BinaryClassificationMetrics(predictionAndLabels)
-val accuracy = predictionAndLabels.filter{case(a,b) => a==b}.count().toDouble / predictionAndLabels.count()
-predictionAndLabels.filter{x=>x._1==x._2}.count().toDouble/ predictionAndLabels.count()
-//predictionAndLabels.coalesce(1).saveAsTextFile("LRResultPredictedSolution")
-}
-}
+var m = metrics.roc().collect()

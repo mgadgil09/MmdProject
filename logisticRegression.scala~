@@ -80,8 +80,7 @@ val predictionAndLabels = testdata.map { case LabeledPoint(label, features) =>
 
 // Get evaluation metrics.
 val metrics = new BinaryClassificationMetrics(predictionAndLabels)
-val accuracy = predictionAndLabels.filter{case(a,b) => a==b}.count().toDouble / predictionAndLabels.count()
 predictionAndLabels.filter{x=>x._1==x._2}.count().toDouble/ predictionAndLabels.count()
-//predictionAndLabels.coalesce(1).saveAsTextFile("LRResultPredictedSolution")
+predictionAndLabels.coalesce(1).saveAsTextFile("LRResultPredictedSolution")
 }
 }

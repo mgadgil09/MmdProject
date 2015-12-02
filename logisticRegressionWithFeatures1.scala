@@ -6,43 +6,70 @@ import org.apache.spark.mllib.classification.{LogisticRegressionWithLBFGS, Logis
 import org.apache.spark.mllib.evaluation._
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.util.MLUtils
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+import org.apache.spark.SparkContext._
 
-class NaiveBayes {
+class logisticRegressionWithFeatures1 {
   def main(args: Array[String]){
   val conf = new SparkConf().setAppName("prep").setMaster("local")
     val sc = new SparkContext(conf)
-def svmlibConverter(filename:String):org.apache.spark.rdd.RDD[String] = { 
+ def svmlibConverter(filename:String):org.apache.spark.rdd.RDD[String] = { 
   val data = sc.textFile(filename)
   val parse=data.map { line =>{
     val strArry=line.split(',');
     var updatedLine ="";
   for(i<-0 until strArry.length){
-    if(i==2){
-   updatedLine = updatedLine +strArry(i)+ ",";
-    }
-    else if(i==10 || i==28 || i==30){
-	updatedLine = updatedLine +strArry(i)+ "r ";
-	}
-	else {
-     updatedLine = updatedLine +strArry(i)+ " ";  
+    if(i!=2){
+   updatedLine = updatedLine +strArry(i)+ " ";
+    }else {
+     updatedLine = updatedLine +strArry(i)+ ",";  
     }
   }
-  updatedLine.trim
+  updatedLine
   }}
-val parsedData = parse.map{line => (line.split(",")(0).split(" ")(2),line.split(",")(1))}
-
-val withoutHeader = parsedData.mapPartitionsWithIndex{(idx,iter) => if(idx == 0) iter.drop(1) else iter}
+val withoutHeader = parse.mapPartitionsWithIndex{(idx,iter) => if(idx == 0) iter.drop(1) else iter}
 
   
-
-val impData = withoutHeader.map{case(k,arr) =>
-     var array = arr.split(" ")
-     var temp = for(i <- 0 to array.length-1 if (!array(i).endsWith("r")))yield{
-		array(i)+" "
-			}
-	(k,temp.toArray.mkString.trim)
-	  }
- var vData = impData.map{case(k,v) => (k,(v.split(" ")))}
+val newData = withoutHeader.map{line => 
+      val parts = line.split(",")(0).split(" ")(2)
+     (parts.toInt,line.split(",")(1).trim)}
+ var vData = newData.map{case(k,v) => (k,{
+   //v.split(" ")
+   val arr= v.split(' ').map(a=>(Math.abs(a.toDouble)))
+   var i=0
+  val list= new ListBuffer[Double]
+   var V1=0.0
+   var P7=0.0
+   var E10=0.0
+   var V8=0.0
+   var V6=0.0
+   
+  while(i<arr.length){
+   //var value=0.0
+   
+    if(i%30==19){
+      V1=arr(i).toDouble
+      list+=V1
+    }else if(i%30==6){
+      P7=arr(i).toDouble
+      list+=Math.pow(P7,3)
+      
+    }else if(i%30==17){
+       E10=arr(i).toDouble
+       list+=Math.pow(E10,2)
+    }else if(i%30==26){
+       V8=arr(i).toDouble
+       list+=V8
+    }else if(i%30==24){
+       V6=arr(i).toDouble
+       list+=V6
+    }
+   
+   i+=1
+  }
+   list.toArray
+   })}
 
 val header = parse.take(1).map{line =>
       val parts = line.split(",")(0).split(" ")(2)
@@ -59,18 +86,16 @@ var joined = vData.map{case(k,v) =>
 		}.map{line => line.substring(1,line.length-1)}.map{line => line.split(",")(0)+" "+line.split(",")(1).trim}
 
 joined
-	} 	
-svmlibConverter("fordTrain.csv").saveAsTextFile("trainingDataLogResPlain")
-svmlibConverter("fordTest.csv").saveAsTextFile("testingDataLogResPlain")
+	} 
+svmlibConverter("fordTrain.md").saveAsTextFile("trainingDataLogResPlain")
+svmlibConverter("fordTest.md").saveAsTextFile("testingDataLogResPlain")
 
 
 val traindata = MLUtils.loadLibSVMFile(sc, "trainingDataLogResPlain/part-0000*").cache()
 val testdata = MLUtils.loadLibSVMFile(sc, "testingDataLogResPlain/part-0000*")
 	
 
-val model = new LogisticRegressionWithLBFGS()
-  .setNumClasses(2)
-  .run(traindata)
+val model = new LogisticRegressionWithLBFGS().setNumClasses(2).run(traindata)
 
 // Compute raw scores on the test set.
 val predictionAndLabels = testdata.map { case LabeledPoint(label, features) =>
@@ -80,8 +105,7 @@ val predictionAndLabels = testdata.map { case LabeledPoint(label, features) =>
 
 // Get evaluation metrics.
 val metrics = new BinaryClassificationMetrics(predictionAndLabels)
-val accuracy = predictionAndLabels.filter{case(a,b) => a==b}.count().toDouble / predictionAndLabels.count()
 predictionAndLabels.filter{x=>x._1==x._2}.count().toDouble/ predictionAndLabels.count()
-//predictionAndLabels.coalesce(1).saveAsTextFile("LRResultPredictedSolution")
+predictionAndLabels.coalesce(1).saveAsTextFile("LRResultPredictedSolution")
 }
 }

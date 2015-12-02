@@ -1,0 +1,6 @@
+------data/EnsembledResultWith6Models.txt Results--------------
+
+ACCURACY=0.7530846829252146
+AUC ROC=0.6190614517367531
+F1 SCORE=0.4148804737905203
+

@@ -32,10 +32,13 @@ object StatsCalc {
     val fpr = fp/(fp+tn)  //false +ve rate
     val precision = tp/(tp+fp)
     
-    val acc = tp+tn/(tp+fp+fn+tn)  //accuracy
-    
+    val acc = (tp+tn)/(tp+fp+fn+tn)  //accuracy
+    val aucroc = (tpr - fpr + 1)/2
     val f1 = (2 * precision * tpr)/(precision + tpr)
     
+    println("ACCURACY="+acc)
+    println("AUC ROC="+aucroc)
+    println("F1 SCORE="+f1)
     
   }
 }

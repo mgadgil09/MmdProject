@@ -1,0 +1,6 @@
+------data/NaiveBayesResults.txt Results--------------
+
+ACCURACY=0.5221630031779662
+AUC ROC=0.46729242975391927
+F1 SCORE=0.29702680984732266
+

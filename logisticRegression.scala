@@ -11,27 +11,38 @@ class NaiveBayes {
   def main(args: Array[String]){
   val conf = new SparkConf().setAppName("prep").setMaster("local")
     val sc = new SparkContext(conf)
- def svmlibConverter(filename:String):org.apache.spark.rdd.RDD[String] = { 
+def svmlibConverter(filename:String):org.apache.spark.rdd.RDD[String] = { 
   val data = sc.textFile(filename)
   val parse=data.map { line =>{
     val strArry=line.split(',');
     var updatedLine ="";
   for(i<-0 until strArry.length){
-    if(i!=2){
-   updatedLine = updatedLine +strArry(i)+ " ";
-    }else {
-     updatedLine = updatedLine +strArry(i)+ ",";  
+    if(i==2){
+   updatedLine = updatedLine +strArry(i)+ ",";
+    }
+    else if(i==10 || i==28 || i==30){
+	updatedLine = updatedLine +strArry(i)+ "r ";
+	}
+	else {
+     updatedLine = updatedLine +strArry(i)+ " ";  
     }
   }
-  updatedLine
+  updatedLine.trim
   }}
-val withoutHeader = parse.mapPartitionsWithIndex{(idx,iter) => if(idx == 0) iter.drop(1) else iter}
+val parsedData = parse.map{line => (line.split(",")(0).split(" ")(2),line.split(",")(1))}
+
+val withoutHeader = parsedData.mapPartitionsWithIndex{(idx,iter) => if(idx == 0) iter.drop(1) else iter}
 
   
-val newData = withoutHeader.map{line => 
-      val parts = line.split(",")(0).split(" ")(2)
-     (parts.toInt,line.split(",")(1).trim)}
- var vData = newData.map{case(k,v) => (k,(v.split(" ")))}
+
+val impData = withoutHeader.map{case(k,arr) =>
+     var array = arr.split(" ")
+     var temp = for(i <- 0 to array.length-1 if (!array(i).endsWith("r")))yield{
+		array(i)+" "
+			}
+	(k,temp.toArray.mkString.trim)
+	  }
+ var vData = impData.map{case(k,v) => (k,(v.split(" ")))}
 
 val header = parse.take(1).map{line =>
       val parts = line.split(",")(0).split(" ")(2)
@@ -48,7 +59,7 @@ var joined = vData.map{case(k,v) =>
 		}.map{line => line.substring(1,line.length-1)}.map{line => line.split(",")(0)+" "+line.split(",")(1).trim}
 
 joined
-	} 
+	} 	
 svmlibConverter("fordTrain.csv").saveAsTextFile("trainingDataLogResPlain")
 svmlibConverter("fordTest.csv").saveAsTextFile("testingDataLogResPlain")
 
@@ -69,7 +80,8 @@ val predictionAndLabels = testdata.map { case LabeledPoint(label, features) =>
 
 // Get evaluation metrics.
 val metrics = new BinaryClassificationMetrics(predictionAndLabels)
+val accuracy = predictionAndLabels.filter{case(a,b) => a==b}.count().toDouble / predictionAndLabels.count()
 predictionAndLabels.filter{x=>x._1==x._2}.count().toDouble/ predictionAndLabels.count()
-predictionAndLabels.coalesce(1).saveAsTextFile("LRResultPredictedSolution")
+//predictionAndLabels.coalesce(1).saveAsTextFile("LRResultPredictedSolution")
 }
 }

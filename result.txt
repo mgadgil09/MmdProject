@@ -1,0 +1,47 @@
+
+accuracy: Double = 0.42323733862959284 with all features
+accuracy: Double = 0.5819644320128435 with 15 bins and no features
+parameters used lambda=1.0
+some features were not useful so excluded and tried on 27 features it gave quite better result than wit 30 features.
+
+We have taken reference from standford paper and there they mentioned about some feature selection and tried on those features which gave us good results:
+accuracy: Double = 0.2475504799735187 with expanded features(inverse, square, cube) 
+accuracy: Double = 0.5806486316503777 with 27 bins
+
+accuracy: Double = 0.7524495200264812 with features (+0.1494·V11+4.4185·
+E9, E5)
+
+https://github.com/mgadgil09/MmdProject.git
+
+accuracy: Double = 0.5804865938430983 with ( v11,E9V11 ,P5P6
+,P1E5,E1^2)
+accuracy: Double = 0.5211645246981521 with 2 bins
+
+We have considered only the result of naive bayes with features in ensembled result which have around 58% accuracy 
+ 
+//////////////////SVM
+accuracy: Double = 0.2475525285710739(with all features)
+Area under ROC = 0.5
+parameters num iteration 100, stepsize=.01 and reg param =0.1
+accuracy: Double = 0.3564412151705989 with 27 features
+
+accuracy: Double = 0.3564412151705989 with features(E9,P1,V1^2,P7^2,E10^2)
+Area under ROC= 0.5149103205929403
+No difference in this case with step size 0.01 and regularization param =0.1
+
+
+
+accuracy: Double = 0.2789662277906967 with features(E7*E9,E9*V1,E8*V2,E11*V5,E4*V4)
+Area under ROC = 0.5188219024129828
+
+accuracy: Double = 0.7064523870604689 with features(E7*E9,E9*V1,E8*V2,E11*V5,E4*V4) step size 0.01 and regularization param =0.1
+Area under ROC = 0.510283360370483
+
+////////////////////////////////LR
+res21: Double = 0.6068322313160486 with features
+res25: Double = 0.6349274654705849
+
+accuracy with ensembled accuracy: Double = 0.6851513170416835
+accuracy: Double = 0.7338028285570056 with weighted accuracy
+accuracy: Double = 0.7530846829252146 6 models weighted
+accuracy: Double = 0.8745024371270864 weighted two best models(Random Forest and LRBFG)

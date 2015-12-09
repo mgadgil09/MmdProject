@@ -9,3 +9,17 @@ sbt package
 /home/madhura/spark/bin/spark-submit --class "StatsCalc" --master local[*] target/scala-2.10/statscalc_2.10-1.0.jar "data/EnsembledResultWith5Models.txt" > EnsembledResultsWith5Models.txt
 /home/madhura/spark/bin/spark-submit --class "StatsCalc" --master local[*] target/scala-2.10/statscalc_2.10-1.0.jar "data/EnsembledResultWith6Models.txt" > EnsembledResultsWith6Models.txt
 cat LRwith27.txt LRwithFeatures.txt LRwithFeatures1.txt NaiveBayes.txt RandomForest.txt SVMResults.txt EnsembledResultsWith5Models.txt EnsembledResultsWith6Models.txt > FinalStatsResults.txt
+
+
+
+
+
+
+
+
+
+
+
+
+
+

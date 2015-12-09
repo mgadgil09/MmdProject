@@ -67,12 +67,12 @@ svmlibConverter("fordTrain.csv").saveAsTextFile("trainingDataRandomForests")
 svmlibConverter("fordTest.csv").saveAsTextFile("testingDataRandomForests")
 
 
-val traindata = MLUtils.loadLibSVMFile(sc, "trainingDataRandomForests/part-0000*").cache()
-val testdata = MLUtils.loadLibSVMFile(sc, "testingDataRandomForests/part-0000*")
+val traindata = MLUtils.loadLibSVMFile(sc, "trainingDataForPCA25/part-0000*").cache()
+val testdata = MLUtils.loadLibSVMFile(sc, "testingDataForPCA25/part-0000*")
 
 val numClasses = 2
 val categoricalFeaturesInfo = Map[Int, Int]()
-val numTrees = 27// Use more in practice.
+val numTrees = 25// Use more in practice.
 val featureSubsetStrategy = "auto" // Let the algorithm choose.
 val impurity = "gini"
 val maxDepth = 2
